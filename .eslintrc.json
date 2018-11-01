@@ -1,0 +1,19 @@
+{
+  "extends": [
+    "@dzek69/eslint-config-base"
+  ],
+  "env": {
+    "node": true
+  },
+  "overrides": [
+    {
+      "files": ["src/*.spec.js", "src/**/*.spec.js"],
+      "env": {
+        "mocha": true
+      },
+      "rules": {
+        "max-lines": "off"
+      }
+    }
+  ]
+}
