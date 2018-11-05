@@ -2,6 +2,9 @@
   "extends": [
     "@dzek69/eslint-config-base"
   ],
+  "parserOptions": {
+    "sourceType": "module"
+  },
   "env": {
     "node": true
   },
@@ -12,7 +15,11 @@
         "mocha": true
       },
       "rules": {
-        "max-lines": "off"
+        "global-require": "off",
+        "max-lines": "off",
+        "max-lines-per-function": "off",
+        "max-statements": "off",
+        "no-magic-numbers": "off"
       }
     }
   ]
