@@ -253,4 +253,11 @@ describe("createError", () => {
         }
         /* eslint-enable new-cap */
     });
+
+    it("has non-enumerable properties", () => {
+        const MyError = createError("MyError", SyntaxError);
+        const error = new MyError("abc", { a: 5 }, new TypeError("xxx"));
+
+        Object.keys(error).must.eql([]);
+    });
 });

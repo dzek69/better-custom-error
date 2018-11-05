@@ -82,7 +82,72 @@ const enhanceToString = array => {
     return array;
 };
 
-const createError = (name, ParentError = Error) => {
+/**
+ * @param {string} stack
+ * @param {string} name
+ * @param {string} message
+ * @param {ErrorOptions} options
+ * @returns {string} new stack trace
+ */
+const cleanUpStack = (stack, name, message, { cleanStackTraces }) => {
+    let newLines;
+
+    const lines = stack.split("\n");
+    const newFirstLine = name + (message ? ": " + message : "");
+
+    lines.shift(); // remove name/message line
+    lines.shift(); // remove first line of stack as it contains internal call we don't need
+    if (cleanStackTraces) {
+        newLines = lines.filter((line) => {
+            return !(/at .* \(internal.*:\d+:\d+\)/.test(line));
+        });
+    }
+    else {
+        newLines = lines;
+    }
+
+    return newFirstLine + "\n" + newLines.join("\n");
+};
+
+/**
+ * @typedef {Object} ErrorOptions
+ * @param {boolean} cleanStackTraces - should stack trace be cleaned up from node internals
+ */
+
+/**
+ * @typedef {Error} CustomError
+ * @param {string} name - error name
+ * @param {string} message - error message
+ * @param {string} stack - error stack trace
+ * @param {Object} details - error details
+ * @param {Array.<Array|string>} names - hierarchy of extended/parent error names
+ */
+
+const defaultOptions = {
+    cleanStackTraces: true,
+};
+
+/**
+ * @param {string} name
+ * @param {Error} ParentError
+ * @param {ErrorOptions} options
+ * @returns {CustomError}
+ */
+const createError = (name, ParentError = Error, options) => { // eslint-disable-line max-lines-per-function
+    const useOptions = Object.assign( // eslint-disable-line prefer-object-spread
+        {},
+        defaultOptions,
+        createError.defaultOptions,
+        options,
+    );
+
+    /**
+     * @param {Error|Object|string} arg1
+     * @param {Error|Object|string} arg2
+     * @param {Error|Object|string} arg3
+     * @returns {CustomError}
+     * @constructor
+     */
     const CustomError = function CustomError(arg1, arg2, arg3) {
         if (!(this instanceof CustomError)) {
             return new CustomError(arg1, arg2, arg3);
@@ -90,23 +155,53 @@ const createError = (name, ParentError = Error) => {
 
         const { sourceError, message, details } = parseArguments(arg1, arg2, arg3);
 
-        this.name = name;
-
-        // provide list of parent errors
-        this.names = enhanceToString([name]);
+        const names = enhanceToString([name]);
         if (sourceError) {
             if (sourceError.names) {
-                this.names.push(sourceError.names);
+                names.push(sourceError.names);
             }
             else {
-                this.names.push(enhanceToString(getPrototypesNames(sourceError)));
+                names.push(enhanceToString(getPrototypesNames(sourceError)));
             }
         }
-        this.names.push(...getPrototypesNames(this));
+        names.push(...getPrototypesNames(this));
 
-        this.message = getMessage(sourceError, message);
-        this.details = getDetails(sourceError, details);
+        const useMessage = getMessage(sourceError, message);
+
+        Object.defineProperties(this, {
+            name: {
+                configurable: true,
+                enumerable: false,
+                value: name,
+                writable: true,
+            },
+            names: {
+                configurable: true,
+                enumerable: false,
+                value: names,
+                writable: true,
+            },
+            message: {
+                configurable: true,
+                enumerable: false,
+                value: useMessage,
+                writable: true,
+            },
+            details: {
+                configurable: true,
+                enumerable: false,
+                value: getDetails(sourceError, details),
+                writable: true,
+            },
+            stack: {
+                configurable: true,
+                enumerable: false,
+                value: cleanUpStack(new Error().stack, name, useMessage, useOptions),
+                writable: true,
+            },
+        });
     };
+
     CustomError.prototype = new ParentError();
     return CustomError;
 };
