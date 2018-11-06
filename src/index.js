@@ -76,9 +76,14 @@ const parseArguments = (...args) => { // eslint-disable-line max-statements
 };
 
 const enhanceToString = array => {
-    array.toString = function toStringCustom() { // eslint-disable-line no-param-reassign
-        return "(" + Array.prototype.toString.call(this) + ")";
-    };
+    Object.defineProperty(array, "toString", {
+        configurable: true,
+        enumerable: false,
+        value: function toStringCustom() { // eslint-disable-line no-param-reassign
+            return "(" + Array.prototype.toString.call(this) + ")";
+        },
+        writable: true,
+    });
     return array;
 };
 
@@ -87,6 +92,7 @@ const enhanceToString = array => {
  * @param {string} name
  * @param {string} message
  * @param {ErrorOptions} options
+ * @private
  * @returns {string} new stack trace
  */
 const cleanUpStack = (stack, name, message, { cleanStackTraces }) => {
@@ -111,16 +117,16 @@ const cleanUpStack = (stack, name, message, { cleanStackTraces }) => {
 
 /**
  * @typedef {Object} ErrorOptions
- * @param {boolean} cleanStackTraces - should stack trace be cleaned up from node internals
+ * @property {boolean} cleanStackTraces - should stack trace be cleaned up from node internals
  */
 
 /**
  * @typedef {Error} CustomError
- * @param {string} name - error name
- * @param {string} message - error message
- * @param {string} stack - error stack trace
- * @param {Object} details - error details
- * @param {Array.<Array|string>} names - hierarchy of extended/parent error names
+ * @property {string} name - error name
+ * @property {string} message - error message
+ * @property {string} stack - error stack trace
+ * @property {Object} details - error details
+ * @property {Array.<Array|string>} names - hierarchy of extended/parent error names
  */
 
 const defaultOptions = {
@@ -128,9 +134,11 @@ const defaultOptions = {
 };
 
 /**
- * @param {string} name
- * @param {Error} ParentError
- * @param {ErrorOptions} options
+ * Creates new custom Error constructor.
+ *
+ * @param {string} name - error name
+ * @param {Error} ParentError - Error to inherit from (built-in or custom error)
+ * @param {ErrorOptions} options - options to override global options
  * @returns {CustomError}
  */
 const createError = (name, ParentError = Error, options) => { // eslint-disable-line max-lines-per-function
@@ -142,9 +150,11 @@ const createError = (name, ParentError = Error, options) => { // eslint-disable-
     );
 
     /**
-     * @param {Error|Object|string} arg1
-     * @param {Error|Object|string} arg2
-     * @param {Error|Object|string} arg3
+     * Creates custom error object instance. Arguments order doesn't matter.
+     *
+     * @param {Error|Object|string|void|null} arg1 - parent error instance or error message or error details object
+     * @param {Error|Object|string|void|null} arg2 - parent error instance or error message or error details object
+     * @param {Error|Object|string|void|null} arg3 - parent error instance or error message or error details object
      * @returns {CustomError}
      * @constructor
      */
