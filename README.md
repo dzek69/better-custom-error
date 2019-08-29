@@ -26,7 +26,7 @@ features useful for logging/debugging.
 
 - Enables better logging and bug tracking:
     - You can access inheritance tree from your error.
-    - Node.js internal stack trace lines are removed, focus on the code itself (you can disable that feature).
+    - Node.js internal stack trace lines are removed, focus on the code itself (you can disable this feature).
 
 ## Usage
 

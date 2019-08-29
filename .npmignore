@@ -1,8 +1,7 @@
 /.idea/
-/build-scripts/
-/test/
+/docs/
+/dist/
+/node_modules/
 
-/.babelrc
-/yarn.lock
 /*.tgz
-/*.log
+*.log
