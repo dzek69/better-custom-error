@@ -79,7 +79,7 @@ const enhanceToString = array => {
     Object.defineProperty(array, "toString", {
         configurable: true,
         enumerable: false,
-        value: function toStringCustom() { // eslint-disable-line no-param-reassign
+        value: function toStringCustom() {
             return "(" + Array.prototype.toString.call(this) + ")";
         },
         writable: true,

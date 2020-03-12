@@ -1,6 +1,13 @@
 /.idea/
-/docs/
-/node_modules/
+/build-scripts/
+/test/
+/dist/**/*.spec.js
 
+/.babelrc.cjs
+/yarn.lock
 /*.tgz
-*.log
+/*.log
+/.yarnclean
+/jsdoc.json
+/.editorconfig
+/.eslintrc.json

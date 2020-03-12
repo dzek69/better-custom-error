@@ -35,11 +35,8 @@ features useful for logging/debugging.
 `yarn add better-custom-error` or `npm i better-custom-error --save`
 
 ```javascript
-// If you're ready for ES6 code with modules syntax use
 import createError from "better-custom-error";
-
-// If you're not ready for it, use
-const createError = require("better-custom-error/dist").default;
+// or const createError = require("better-custom-error");
 
 const MyError = createError("MyError");
 const AnotherError = createError("AnotherError", MyError); // it extends `Error` by default, but you can pass another error
