@@ -1,4 +1,4 @@
-const createError = require("../../dist").default;
+const createError = require("../../dist");
 
 if (!{}.must) {
     console.error("Must.js is not registered. Do not run this file directly. Use index.js");
