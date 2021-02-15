@@ -1,4 +1,4 @@
-const createError = require("../../dist");
+const { createError } = require("../../dist");
 
 if (!{}.must) {
     console.error("Must.js is not registered. Do not run this file directly. Use index.js");
@@ -66,13 +66,14 @@ try {
         const MyError = createError("MyError", SyntaxError, { cleanStackTraces: false });
 
         const err = new MyError("Bad things happend");
-        err.stack.must.match(/\(internal/);
+        err.stack.must.match(/(\(internal|\(node:internal)/);
     }
     {
         const MyError = createError("MyError", SyntaxError, { cleanStackTraces: true });
 
         const err = new MyError("Bad things happend");
         err.stack.must.not.match(/\(internal/);
+        err.stack.must.not.match(/\(node:internal/);
     }
 
     ok(test);
@@ -147,3 +148,5 @@ catch (e) {
     global.hadError = true;
     error(test, e);
 }
+
+// @todo add test for setDefaultOptions

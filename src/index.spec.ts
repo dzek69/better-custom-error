@@ -1,4 +1,4 @@
-import createError from "./index.mjs";
+import { createError } from "./index";
 
 describe("createError", () => {
     it("createError should return a function", () => {

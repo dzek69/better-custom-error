@@ -3,7 +3,7 @@
 ## Available options
 
 - (boolean) `cleanStackTraces` - defines if stack traces from this error instance should be cleaned from node-specific
-internal calls. 
+internal calls.
 
 ## Defaults
 
@@ -21,14 +21,12 @@ You can override defaults just for single Error constructor when creating it:
 createError(name, ParentError, options);
 ```
 
-You can also override defaults for all created errors by overriding `createError.defaultOptions` (this is not defined by
-default).
+You can also override defaults for all created errors by calling `setDefaultOptions`.
 
 ```javascript
-createError.defaultOptions = {
+setDefaultOptions({
     cleanStackTraces: false,
-};
+});
 ```
 
-
-> Note: Overriding `createError.defaultOptions` does NOT change behavior of already created instances. 
+> Note: Overriding defaults does NOT change behavior of already created instances.
