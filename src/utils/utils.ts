@@ -5,13 +5,12 @@ interface Prototype {
 }
 
 const getMessage = (error?: Error | CustomError, message?: string): string => {
-    // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
     return message || (error?.message) || "";
 };
 
-const getDetails = (error?: Error | CustomError, details?: Record<string, unknown>) => {
+const getDetails = (error?: Error | CustomError, details?: Data) => {
     // @ts-expect-error Yes TS, I know
-    // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing,@typescript-eslint/no-unnecessary-condition
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     return details || (error?.details as Data) || null;
 };
 

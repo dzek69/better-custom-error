@@ -1,6 +1,6 @@
 type Names = (string | Names)[];
 
-type Data = Record<string, unknown>;
+interface Data {}
 
 /**
  * @typedef {Error} CustomError
