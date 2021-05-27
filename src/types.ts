@@ -17,7 +17,7 @@ interface CustomError extends Error {
 
 type Arg = Error | CustomError | string | Data | undefined | null;
 
-interface CustomErrorConstructor extends ErrorConstructor {
+interface CustomErrorConstructor extends ErrorConstructor, CustomError {
     new(arg1?: Arg, arg2?: Arg, arg3?: Arg): CustomError;
 }
 
