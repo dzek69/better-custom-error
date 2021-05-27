@@ -20,6 +20,8 @@ type Arg = Error | CustomError | string | Data | undefined | null;
 interface CustomErrorConstructor extends CustomError {
     new(arg1?: Arg, arg2?: Arg, arg3?: Arg): CustomError;
     (arg1?: Arg, arg2?: Arg, arg3?: Arg): CustomError;
+    stackTraceLimit: ErrorConstructor["stackTraceLimit"];
+    captureStackTrace: ErrorConstructor["captureStackTrace"];
 }
 
 /**
