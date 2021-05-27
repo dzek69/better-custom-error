@@ -104,7 +104,6 @@ const createError = (name: string, ParentError = Error, options?: Options) => { 
         });
     } as CustomErrorConstructor;
 
-    // @ts-expect-error overriding prototype, sorry TS
     CustomError.prototype = new ParentError();
     return CustomError;
 };
