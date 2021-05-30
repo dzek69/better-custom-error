@@ -6,7 +6,7 @@ import {
     getPrototypesNames,
     cleanUpStack,
 } from "./utils/index.js";
-import type { Arg, Options, CustomErrorConstructor } from "./types";
+import type { Arg, Options, CustomErrorConstructor, CustomError as CustomErrorType } from "./types";
 
 const defaultOptions: Options = {
     cleanStackTraces: true,
@@ -111,4 +111,8 @@ const createError = (name: string, ParentError = Error, options?: Options) => { 
 export {
     createError,
     setDefaultOptions,
+};
+
+export type {
+    CustomErrorType as CustomError,
 };
