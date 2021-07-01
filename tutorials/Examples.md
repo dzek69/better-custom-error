@@ -1,11 +1,9 @@
-# better-custom-error
-
 Some examples.
 
 > Imporant: creating two errors with the same name will create two different errors references anyway! Export them and
 import where needed or make your errors global.
 
-## Native solution doesn't work as expected
+## Native solution doesn't work as expected (with code transpiled to ES5!)
 
 ```javascript
 const MyError = createError("MyError");
@@ -14,16 +12,16 @@ const MyOtherError = createError("MyOtherError", MyError);
 const error = new MyOtherError();
 console.log(error instanceof MyError); // true
 
-// vs native:
+// vs native (please transpile to ES5 to see the problem):
 
 class MyError extends Error {}
-class MyOtherError extends Error {}
+class MyOtherError extends MyError {}
 
 const error = new MyOtherError();
 console.log(error instanceof MyError); // false
 ```
 
-## Custom error details object simplifies passing custom data 
+## Custom error details object simplifies passing custom data
 
 ```javascript
 throw new MyCustomError("Cannot do stuff", { debugStats: databaseEngine.stats() });
@@ -100,7 +98,7 @@ const renderProductPage = (id) => {
         if (error instanceof NotFoundError) {
             throw error; // just re-throw
         }
-        
+
         throw new DatabaseError(error);
     }
 }
@@ -113,7 +111,7 @@ try {
 catch (e) {
     // text-based log service
     loggingService.log(e.name, e.message, JSON.stringify(e.details), String(e.names), e.stack);
-    
+
     if (e instanceof NotFoundError) {
         res.send(router.renderError(404));
     }

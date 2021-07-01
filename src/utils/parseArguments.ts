@@ -6,7 +6,7 @@ const invalidArguments = () => {
     throw new TypeError("Invalid arguments passed into error");
 };
 
-const parseArguments = (...args: Arg[]) => { // eslint-disable-line max-statements
+const parseArguments = (...args: Arg<unknown>[]) => { // eslint-disable-line max-statements
     let sourceError: Error | CustomError | undefined, message: string | undefined, details: Data | undefined;
 
     if (args.length > MAX_ARGUMENTS) {

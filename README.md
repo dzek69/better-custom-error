@@ -1,8 +1,8 @@
 # better-custom-error
 
 Helper for creating Error subclass with bonus features.
-It fully works with Babel (as opposed to native ES6 `class`), allows to pass custom data to errors and it contains
-features useful for logging/debugging.
+It fully works as expected with code transpiled to ES5 from ES6 code.
+It allows to pass custom data to errors and it contains features useful for logging/debugging.
 
 ## Reasons to use
 
@@ -21,7 +21,7 @@ features useful for logging/debugging.
     details as an object.
     - No more JSON serializing data into error message. - Yeah, I've seen that.
     - Custom error doesn't care about arguments order. It will figure it out. Pass parent error instance, message and
-    details object in any order. Pass `null` or `undefined` and it won't crash so you don't need to care about
+    details object in any order. Pass `null` or `undefined` and it won't crash, so you don't need to care about
     variable/property existence/initialization check.
 
 - Enables better logging and bug tracking:
@@ -35,18 +35,26 @@ features useful for logging/debugging.
 `yarn add better-custom-error` or `npm i better-custom-error --save`
 
 ```javascript
-import createError from "better-custom-error";
-// or const createError = require("better-custom-error");
+import { createError } from "better-custom-error";
+// or const { createError } = require("better-custom-error");
 
 const MyError = createError("MyError");
 const AnotherError = createError("AnotherError", MyError); // it extends `Error` by default, but you can pass another error
 const YetAnotherError = createError("YetAnotherError", Error, options);
 ```
 
-For `options` see: [Options Usage](https://dzek69.github.io/better-custom-error/tutorial-Options%20usage.html).
+For `options` see: [Options Usage](https://dzek69.github.io/better-custom-error/pages/Tutorials/Options%20usage.html).
 
 > Imporant: creating two errors with the same name will create two different errors references anyway! Export them and
 import where needed or make your errors global.
+
+## Note on TypeScript
+
+This library is basically all about creating new types on runtime.
+TypeScript is static typechecker, therefore it doesn't play perfect with this, because every error has basically the
+same type, optionally differentiating on `details` object shape.
+
+See [documentation](https://dzek69.github.io/better-custom-error/) for more info.
 
 ## TODO
 

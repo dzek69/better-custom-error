@@ -1,20 +1,4 @@
-# better-custom-error
-
-## Available options
-
-- (boolean) `cleanStackTraces` - defines if stack traces from this error instance should be cleaned from node-specific
-internal calls.
-
-## Defaults
-
-Currently by default this library defines following options:
-```javascript
-{
-    cleanStackTraces: true
-}
-```
-
-## Overriding defaults
+See {@link Options} first.
 
 You can override defaults just for single Error constructor when creating it:
 ```javascript

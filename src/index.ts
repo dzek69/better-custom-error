@@ -16,21 +16,48 @@ let globalDefaultOptions: Options = {};
 
 /**
  * Sets default options for all future created errors. Does not affect previously created errors!
- * @param {Options} options
+ * @param options
  */
 const setDefaultOptions = (options: Options) => {
     globalDefaultOptions = options;
 };
 
 /**
- * Creates new custom Error constructor.
+ * Creates new custom Error constructor. Use it to create errors to throw.
  *
- * @param {string} name - error name
- * @param {Error} [ParentError] - Error to inherit from (built-in or custom error)
- * @param {Options} [options] - options to override global options
+ * @param name - error name
+ * @param ParentError - Error to inherit from (built-in or custom error)
+ * @param options - options to override global options
+ *
+ * @typeparam D - details object interface
+ *
+ * @example
+ * Create basic custom error
+ * ```
+ * const MyError = createError("MyError");
+ * throw new MyError("My custom problem happened");
+ * ```
+ *
+ * @example
+ * Create custom error with specified details shape
+ * ```
+ * const HttpError = createError<{ code: number, url: string }>("HttpError");
+ * throw new HttpError("Not Found", { code: 404, url: "/image.gif" });
+ * ```
+ *
+ * @example
+ * Create custom error defining parent error to inherit from
+ * ```
+ * const HttpError = createError<{ code: number, url: string }>("HttpError");
+ * const NotFoundError = createError({ url: string }, HttpError);
+ *
+ * const err = new NotFoundError("Not Found", { url: "/image.gif" });
+ * err instanceof NotFoundError; // true
+ * err instanceof HttpError; // true
+ * ```
  * @returns {CustomError}
  */
-const createError = (name: string, ParentError = Error, options?: Options) => { // eslint-disable-line max-lines-per-function, max-len
+const createError = <D>(name: string, ParentError = Error, options?: Options) => { // eslint-disable-line max-lines-per-function, max-len
     const useOptions = Object.assign( // eslint-disable-line prefer-object-spread
         {},
         defaultOptions,
@@ -48,7 +75,7 @@ const createError = (name: string, ParentError = Error, options?: Options) => { 
      * @returns {CustomError}
      * @constructor
      */
-    const CustomError = function CustomError(this: typeof CustomError, arg1: Arg, arg2: Arg, arg3: Arg) {
+    const CustomError = function CustomError(this: typeof CustomError, arg1: Arg<D>, arg2: Arg<D>, arg3: Arg<D>) {
         if (!(this instanceof CustomError)) {
             // @ts-expect-error needed if creating instances without `class`
             // eslint-disable-next-line @typescript-eslint/no-unsafe-return
@@ -102,7 +129,7 @@ const createError = (name: string, ParentError = Error, options?: Options) => { 
                 writable: true,
             },
         });
-    } as CustomErrorConstructor;
+    } as CustomErrorConstructor<D>;
 
     CustomError.prototype = new ParentError();
     return CustomError;
@@ -115,4 +142,5 @@ export {
 
 export type {
     CustomErrorType as CustomError,
+    Options,
 };

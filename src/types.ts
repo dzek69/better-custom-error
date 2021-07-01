@@ -10,26 +10,25 @@ interface Data {}
  * @property {Object} details - error details
  * @property {Array.<Array|string>} names - hierarchy of extended/parent error names
  */
-interface CustomError extends Error {
+interface CustomError<D = { [key: string]: unknown }> extends Error {
     names: Names;
-    details?: Record<string, unknown>;
+    details?: D;
 }
 
-type Arg = Error | CustomError | string | Data | undefined | null;
+type Arg<D> = Error | CustomError | string | D | undefined | null;
 
-interface CustomErrorConstructor extends CustomError {
-    new(arg1?: Arg, arg2?: Arg, arg3?: Arg): CustomError;
-    (arg1?: Arg, arg2?: Arg, arg3?: Arg): CustomError;
+interface CustomErrorConstructor<D> extends CustomError {
+    new(arg1?: Arg<D>, arg2?: Arg<D>, arg3?: Arg<D>): CustomError<D>;
+    (arg1?: Arg<D>, arg2?: Arg<D>, arg3?: Arg<D>): CustomError<D>;
     stackTraceLimit: ErrorConstructor["stackTraceLimit"];
     captureStackTrace: ErrorConstructor["captureStackTrace"];
 }
 
 /**
- * @typedef {Object} Options
- * @property {boolean} cleanStackTraces - should stack trace be cleaned up from node internals
+ * @property cleanStackTraces - should stack trace be cleaned up from node internals
  */
-interface Options {
+export interface Options {
     cleanStackTraces?: boolean;
 }
 
-export type { Names, Data, Arg, CustomError, CustomErrorConstructor, Options };
+export type { Names, Data, Arg, CustomError, CustomErrorConstructor };

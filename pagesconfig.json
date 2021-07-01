@@ -1,0 +1,21 @@
+{
+    "groups": [
+        {
+            "title": "Tutorials",
+            "pages": [
+                {
+                    "title": "Examples",
+                    "source": "./tutorials/Examples.md"
+                },
+                {
+                    "title": "Options usage",
+                    "source": "./tutorials/Options usage.md"
+                },
+                {
+                    "title": "TypeScript note",
+                    "source": "./tutorials/TypeScript.md"
+                }
+            ]
+        }
+    ]
+}
