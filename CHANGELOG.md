@@ -3,9 +3,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [4.1.2] - 2021-08-14
+### Fixed
+- added CustomErrorConstructor type export
+### Dev
+- deep deps upgrade to stop security warnings
+
 ## [4.1.1] - 2021-07-01
 ### Dev
-- deeps deps upgrade to stop security warnings
+- deep deps upgrade to stop security warnings
 
 ## [4.1.0] - 2021-07-01
 ### Added

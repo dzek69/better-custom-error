@@ -142,5 +142,6 @@ export {
 
 export type {
     CustomErrorType as CustomError,
+    CustomErrorConstructor,
     Options,
 };
