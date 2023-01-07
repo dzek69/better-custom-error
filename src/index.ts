@@ -1,3 +1,5 @@
+import type { Arg, Options, CustomErrorConstructor, CustomError as CustomErrorType } from "./types";
+
 import {
     parseArguments,
     enhanceToString,
@@ -6,7 +8,6 @@ import {
     getPrototypesNames,
     cleanUpStack,
 } from "./utils/index.js";
-import type { Arg, Options, CustomErrorConstructor, CustomError as CustomErrorType } from "./types";
 
 const defaultOptions: Options = {
     cleanStackTraces: true,

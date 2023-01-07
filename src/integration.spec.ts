@@ -1,4 +1,4 @@
-import { createError } from "./index";
+import { createError } from "./index.js";
 
 // TS integration tests, they aren't useful in runtime
 

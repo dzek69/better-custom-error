@@ -27,8 +27,8 @@ interface CustomErrorConstructor<D> extends CustomError {
 /**
  * @property cleanStackTraces - should stack trace be cleaned up from node internals
  */
-export interface Options {
+interface Options {
     cleanStackTraces?: boolean;
 }
 
-export type { Names, Data, Arg, CustomError, CustomErrorConstructor };
+export type { Options, Names, Data, Arg, CustomError, CustomErrorConstructor };

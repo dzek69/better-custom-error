@@ -1,4 +1,4 @@
-import { createError } from "./index";
+import { createError } from "./index.js";
 
 describe("createError", () => {
     it("createError should return a function", () => {
