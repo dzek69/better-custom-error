@@ -1,68 +1,34 @@
-# better-custom-error
+# @ezez/errors
 
-Helper for creating Error subclass with bonus features.
-It fully works as expected with code transpiled to ES5 from ES6 code.
-It allows to pass custom data to errors and it contains features useful for logging/debugging.
+JavaScript's errors with superpowers! ⚡
 
-## Reasons to use
+## Features:
 
-- Cleaner code.
-    - Custom error types makes code more readable and easier to maintenance. They can inherit from built-in or other
-    custom types and `instanceof` works as expected with multi level inheritance.
-    - A lot of developers uses custom properties for storing additional data. But usually it not uniform and requires
-    three lines of code to create, extend and throw your error. With this library you're guided on the details object
-    property name and it's easy to throw with details on single line.
-    - Ability to throw new error type basing on already created instance of another error. Did you get an error with
-    details from inner method, want to handle it and pass more generic error outside? You can do that!
-
-- Easy to use
-    - Custom errors behaves just like standard errors when used without extra features.
-    - No more painstaking building error message string with multiple variables. Just throw meaningful message and pass
-    details as an object.
-    - No more JSON serializing data into error message. - Yeah, I've seen that.
-    - Custom error doesn't care about arguments order. It will figure it out. Pass parent error instance, message and
-    details object in any order. Pass `null` or `undefined` and it won't crash, so you don't need to care about
-    variable/property existence/initialization check.
-
-- Enables better logging and bug tracking:
-    - You can access inheritance tree from your error.
-    - Node.js internal stack trace lines are removed, focus on the code itself (you can disable this feature).
+- 🛠 First class TypeScript support - 100% type safe and intellisense friendly
+- 📝 Attach extra data to an error - debug with ease
+- 🪬 Give your errors a meaningful name - improve code readability
+- 🧱 Build your errors one on top of another - access the whole hierarchy
+- 📦 No dependencies - use it anywhere
+- 🌟 Bonus features - clean up your stack traces, normalize invalid values
 
 ## Usage
 
-> Full documentation available here: [documentation](https://dzek69.github.io/better-custom-error/).
+> Full documentation available here: [documentation](https://ezez.dev/docs/errors/latest/).
 
-`yarn add better-custom-error` or `npm i better-custom-error --save`
+`npm i @ezez/errors --save`
 
 ```javascript
-import { createError } from "better-custom-error";
-// or const { createError } = require("better-custom-error");
+import { createError } from "@ezez/errors";
+// or const { createError } = require("@ezez/errors");
 
-const MyError = createError("MyError");
-const AnotherError = createError("AnotherError", MyError); // it extends `Error` by default, but you can pass another error
-const YetAnotherError = createError("YetAnotherError", Error, options);
+const DatabaseError = createError("DatabaseError");
+const QueryError = createError("QueryError", DatabaseError); // it extends `Error` by default, but you can pass another error
+const InsertQueryError = createError("InsertQueryError", QueryError, { cleanStackTraces: false });
+
+// then
+
+throw new DatabaseError("Database error", { date: Date.now(), { ... } });
 ```
-
-For `options` see: [Options Usage](https://dzek69.github.io/better-custom-error/pages/Tutorials/Options%20usage.html).
-
-> Imporant: creating two errors with the same name will create two different errors references anyway! Export them and
-import where needed or make your errors global.
-
-## Note on TypeScript
-
-This library is basically all about creating new types on runtime.
-TypeScript is static typechecker, therefore it doesn't play perfect with this, because every error has basically the
-same type, optionally differentiating on `details` object shape.
-
-See [documentation](https://dzek69.github.io/better-custom-error/) for more info.
-
-## TODO
-
-- Further memory optimization:
-    - create and extend one Custom Error instance
-    - use getters to delay some calculations from error creation to actual read place
-- Ability to override Error prototype so some `better-custom-error` features will be available on native errors too
-- `extend` method for easier extending
 
 ## License
 

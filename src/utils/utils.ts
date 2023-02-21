@@ -4,11 +4,11 @@ interface Prototype {
     name: string;
 }
 
-const getMessage = (error?: Error | CustomError, message?: string): string => {
+const getMessage = (error?: Error | CustomError<Data>, message?: string): string => {
     return message || (error?.message) || "";
 };
 
-const getDetails = (error?: Error | CustomError, details?: Data) => {
+const getDetails = (error?: Error | CustomError<Data>, details?: Data) => {
     // @ts-expect-error Yes TS, I know
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     return details || (error?.details as Data) || null;

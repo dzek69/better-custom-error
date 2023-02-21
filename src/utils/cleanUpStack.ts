@@ -1,11 +1,12 @@
 import type { Options } from "../types";
 
 /**
- * @param {string} stack
- * @param {string} name
- * @param {string} message
+ * Removes node internals from stack trace
+ * @param {string} stack - stack trace
+ * @param {string} name - error name
+ * @param {string} message - error message
  * @param {Options} options
- * @private
+ * @hidden
  * @returns {string} new stack trace
  */
 const cleanUpStack = (stack: string, name: string, message: string, { cleanStackTraces }: Options) => {

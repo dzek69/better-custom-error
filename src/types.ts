@@ -1,6 +1,12 @@
+/**
+ * Deep array of error names hierarchy
+ */
 type Names = (string | Names)[];
 
-interface Data {}
+/**
+ * Extra data that can be attached to the error
+ */
+type Data = Record<string, unknown>;
 
 /**
  * @typedef {Error} CustomError
@@ -10,19 +16,24 @@ interface Data {}
  * @property {Object} details - error details
  * @property {Array.<Array|string>} names - hierarchy of extended/parent error names
  */
-interface CustomError<D = { [key: string]: unknown }> extends Error {
+interface CustomError<D extends Data> extends Error {
     names: Names;
+    parent: CustomError<Data> | Error;
     details?: D;
 }
 
-type Arg<D> = Error | CustomError | string | D | undefined | null;
+type Arg<D extends Data> = Error | CustomError<D> | string | D | undefined | null;
 
-interface CustomErrorConstructor<D> extends CustomError {
+interface CustomErrorConstructor2<D extends Data> {
     new(arg1?: Arg<D>, arg2?: Arg<D>, arg3?: Arg<D>): CustomError<D>;
     (arg1?: Arg<D>, arg2?: Arg<D>, arg3?: Arg<D>): CustomError<D>;
     stackTraceLimit: ErrorConstructor["stackTraceLimit"];
     captureStackTrace: ErrorConstructor["captureStackTrace"];
+    extend: (name: string, options?: Options) => CustomErrorConstructor<D>;
+    readonly prototype: CustomError<D>;
 }
+
+type CustomErrorConstructor<D extends Data> = CustomErrorConstructor2<D>;
 
 /**
  * @property cleanStackTraces - should stack trace be cleaned up from node internals

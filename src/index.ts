@@ -1,4 +1,4 @@
-import type { Arg, Options, CustomErrorConstructor, CustomError as CustomErrorType } from "./types";
+import type { Arg, Options, CustomErrorConstructor, CustomError as CustomErrorType, Data } from "./types";
 
 import {
     parseArguments,
@@ -58,7 +58,7 @@ const setDefaultOptions = (options: Options) => {
  * ```
  * @returns {CustomError}
  */
-const createError = <D>(name: string, ParentError = Error, options?: Options) => { // eslint-disable-line max-lines-per-function, max-len
+const createError = <D extends Data>(name: string, ParentError = Error, options?: Options) => { // eslint-disable-line max-lines-per-function, max-len
     const useOptions = Object.assign( // eslint-disable-line prefer-object-spread
         {},
         defaultOptions,
@@ -69,14 +69,13 @@ const createError = <D>(name: string, ParentError = Error, options?: Options) =>
     /**
      * Creates custom error object instance. Arguments order doesn't matter.
      *
-     * @param {*} this - ignore, do not pass, TS & docs engine incompatibility
      * @param {Error|Object|string|void|null} arg1 - parent error instance or error message or error details object
      * @param {Error|Object|string|void|null} arg2 - parent error instance or error message or error details object
      * @param {Error|Object|string|void|null} arg3 - parent error instance or error message or error details object
      * @returns {CustomError}
      * @constructor
      */
-    const CustomError = function CustomError(this: typeof CustomError, arg1: Arg<D>, arg2: Arg<D>, arg3: Arg<D>) {
+    const CustomError = function CustomError(this: typeof CustomError, arg1: Arg<D>, arg2: Arg<D>, arg3: Arg<D>) { // eslint-disable-line max-lines-per-function, max-len
         if (!(this instanceof CustomError)) {
             // @ts-expect-error needed if creating instances without `class`
             // eslint-disable-next-line @typescript-eslint/no-unsafe-return
@@ -129,9 +128,20 @@ const createError = <D>(name: string, ParentError = Error, options?: Options) =>
                 value: cleanUpStack(new Error().stack!, name, useMessage, useOptions),
                 writable: true,
             },
+            parent: {
+                configurable: true,
+                enumerable: false,
+                value: sourceError,
+                writable: true,
+            },
         });
     } as CustomErrorConstructor<D>;
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    CustomError.extend = function extend<D extends Data>(name: string, options: Options = {}) {
+        return createError<D>(name, CustomError, options);
+    };
 
+    // @ts-expect-error - it has to be like that
     CustomError.prototype = new ParentError();
     return CustomError;
 };

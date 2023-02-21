@@ -32,11 +32,30 @@ describe("createError", () => {
         your.must.be.instanceOf(YourError);
     });
 
+    it("has extend helper method", function() {
+        const MyError = createError("MyError");
+        const YourError = MyError.extend("YourError");
+        const your = new YourError();
+        your.must.be.instanceOf(Error);
+        your.must.be.instanceOf(MyError);
+        your.must.be.instanceOf(YourError);
+    });
+
+    it("should allow to access parent errors", function() {
+        const MyError = createError("MyError");
+        const YourError = MyError.extend("YourError");
+        const your = new YourError("your", new MyError("my", new Error("standard")));
+        your.parent.must.be.instanceOf(MyError);
+        your.parent.message.must.equal("my");
+        your.parent.parent.must.be.instanceOf(Error);
+        your.parent.parent.message.must.equal("standard");
+    });
+
     it("should store names hierarchy with error", () => {
         const MyError = createError("MyError", TypeError);
         const YourError = createError("YourError", MyError);
         const HerError = createError("HerError", YourError);
-        const your = new HerError();
+        const your = new HerError("kaka");
         your.names.must.be.eql([
             "HerError",
             "YourError",

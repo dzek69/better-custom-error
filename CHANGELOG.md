@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Dev
 - added unit tests
 - fixed jest warning
+### Fixed
+- all typescript issues requiring typecasting
+### Added
+- `extend` method, for easier extending
+- `parent` property, for accessing parent error
+### Changed
+- README cleanup
 
 ## [4.1.3] - 2023-01-07
 ### Dev
