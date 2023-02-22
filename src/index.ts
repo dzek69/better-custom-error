@@ -137,8 +137,17 @@ const createError = <D extends Data>(name: string, ParentError = Error, options?
         });
     } as CustomErrorConstructor<D>;
     // eslint-disable-next-line @typescript-eslint/no-shadow
-    CustomError.extend = function extend<D extends Data>(name: string, options: Options = {}) {
-        return createError<D>(name, CustomError, options);
+    CustomError.extend = <D extends Data>(name: string, options: Options = {}) => createError<D>(
+        name, CustomError, options,
+    );
+    CustomError.normalize = (maybeError: unknown) => {
+        if (maybeError instanceof CustomError) {
+            return maybeError;
+        }
+        if (maybeError instanceof Error) {
+            return new CustomError(maybeError);
+        }
+        return new CustomError("Not an error: " + String(maybeError));
     };
 
     // @ts-expect-error - it has to be like that

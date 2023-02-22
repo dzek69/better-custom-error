@@ -313,4 +313,27 @@ describe("createError", () => {
         dirtyError.stack.must.include("node:internal");
         cleanError.stack.must.not.include("node:internal");
     });
+
+    it("normalizes the error", function() {
+        const wtf = "something";
+        const MyError = createError("MyError");
+        const error = MyError.normalize(wtf);
+
+        error.must.be.instanceof(MyError);
+        error.message.must.equal("Not an error: something");
+
+        const my = new MyError();
+        const normalized = MyError.normalize(my);
+        my.must.equal(normalized);
+
+        const standard = new Error("Standard error");
+        const standardNormalized = MyError.normalize(standard);
+        standardNormalized.must.be.instanceof(MyError);
+        standardNormalized.message.must.equal("Standard error");
+
+        const obj = { a: 5 };
+        const objNormalized = MyError.normalize(obj);
+        objNormalized.must.be.instanceof(MyError);
+        objNormalized.message.must.equal("Not an error: [object Object]");
+    });
 });

@@ -30,7 +30,8 @@ interface CustomErrorConstructor2<D extends Data> {
     stackTraceLimit: ErrorConstructor["stackTraceLimit"];
     captureStackTrace: ErrorConstructor["captureStackTrace"];
     extend: (name: string, options?: Options) => CustomErrorConstructor<D>;
-    readonly prototype: CustomError<D>;
+    normalize: (maybeError: unknown) => CustomError<D>;
+    prototype: CustomError<D>;
 }
 
 type CustomErrorConstructor<D extends Data> = CustomErrorConstructor2<D>;
