@@ -6,7 +6,7 @@ describe("createError", () => {
         MyError.must.be.a.function();
     });
 
-    it("should set corrent name", () => {
+    it("should set correct name", () => {
         const MyCustomError = createError("MyError");
         const err = new MyCustomError();
         err.name.must.equal("MyError");
@@ -125,7 +125,7 @@ describe("createError", () => {
         }
     });
 
-    it("allows to creating error from another error instance, without extending", () => {
+    it("allows to create error from another error instance, without extending", () => {
         {
             const DatabaseError = createError("DatabaseError");
             const InternalServerError = createError("InternalServerError");
@@ -259,5 +259,39 @@ describe("createError", () => {
         const error = new MyError("abc", { a: 5 }, new TypeError("xxx"));
 
         Object.keys(error).must.eql([]);
+    });
+
+    it("should have the same stack trace as native error", function() {
+        const MyError = createError("MyError", SyntaxError, { cleanStackTraces: false });
+        const error = new MyError("abc");
+        const nativeError = new Error("abc");
+
+        const customStack = error.stack.split("\n");
+        customStack.shift();
+        const firstCustom = customStack.shift();
+
+        const nativeStack = nativeError.stack.split("\n");
+        nativeStack.shift();
+        const firstNative = nativeStack.shift();
+
+        nativeStack.must.eql(customStack);
+        let differentCharacters = 0;
+        for (let i = 0; i < firstCustom.length; i++) {
+            if (firstCustom[i] !== firstNative[i]) {
+                differentCharacters++;
+            }
+        }
+        differentCharacters.must.be.between(1, 2);
+    });
+
+    it("should cut out node-specific stack traces", function() {
+        const MyDirtyError = createError("MyDirtyError", SyntaxError, { cleanStackTraces: false });
+        const MyCleanError = createError("MyCleanError", SyntaxError, { cleanStackTraces: true });
+
+        const dirtyError = new MyDirtyError("abc");
+        const cleanError = new MyCleanError("abc");
+
+        dirtyError.stack.must.include("node:internal");
+        cleanError.stack.must.not.include("node:internal");
     });
 });

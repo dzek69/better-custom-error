@@ -11,7 +11,9 @@ module.exports = {
     setupFiles: [
         '<rootDir>/test/bootstrap.cjs'
     ],
-    testURL: 'http://localhost:8080',
+    testEnvironmentOptions: {
+        url: "http://localhost:8080",
+    },
     moduleNameMapper: {
         '^(.*)\.js$': '$1',
     },
