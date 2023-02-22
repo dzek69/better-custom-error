@@ -17,9 +17,9 @@ type Data = Record<string, unknown>;
  * @property {Array.<Array|string>} names - hierarchy of extended/parent error names
  */
 interface CustomError<D extends Data> extends Error {
-    names: Names;
-    parent: CustomError<Data> | Error;
     details?: D;
+    parent: CustomError<Data> | Error;
+    names: Names;
 }
 
 type Arg<D extends Data> = Error | CustomError<D> | string | D | undefined | null;
