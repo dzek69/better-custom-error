@@ -184,6 +184,7 @@ catch (e) {
     if (e instanceof RenderError) {
         console.error(e.message, e.details?.date); // RenderError: Failed to render HTML, 123456789
         console.error(e.parent?.message); // i.e.: Error: cannot read property `foo` of undefined
+        console.error(e.ancestors); // array of [parent, parent of that parent, ...until there is no parent]
     }
 }
 ```

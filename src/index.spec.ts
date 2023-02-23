@@ -346,4 +346,15 @@ describe("createError", () => {
             TypeError, "Invalid arguments passed into error",
         );
     });
+
+    it("returns ancestors", function() {
+        const DatabaseError = createError("DatabaseError");
+        const QueryError = DatabaseError.extend("QueryError");
+
+        const tcpError = new Error("TCP Error");
+        const databaseError = new DatabaseError("Cannot connect", null, tcpError);
+        const queryError = new QueryError("Query failed", null, databaseError);
+
+        queryError.ancestors.must.eql([databaseError, tcpError]);
+    });
 });

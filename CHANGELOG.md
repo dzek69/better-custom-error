@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - `extend` method, for easier extending
 - `parent` property, for accessing parent error
+- `ancestors` property, for accessing all ancestors
 - `normalize` method, for easy normalization of invalid values
 ### Breaking
 - do not clean stack traces by default

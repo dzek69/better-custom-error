@@ -1,4 +1,11 @@
-import type { Options, CustomErrorConstructor, CustomError as CustomErrorType, Data, Nullable } from "./types";
+import type {
+    Options,
+    CustomErrorConstructor,
+    CustomError as CustomErrorType,
+    Data,
+    Nullable,
+    CustomError,
+} from "./types";
 
 import {
     parseArguments,
@@ -128,6 +135,20 @@ const createError = <D extends Data>(name: string, ParentError: ErrorConstructor
                 enumerable: false,
                 value: cleanUpStack(new Error().stack!, name, useMessage, useOptions),
                 writable: true,
+            },
+            ancestors: {
+                configurable: true,
+                get: (): Error[] => {
+                    const ancestors: Error[] = [];
+                    // @ts-expect-error TS can't understand things again
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                    let currentError: CustomError<D> | Error | undefined = this.parent;
+                    while (currentError) {
+                        ancestors.push(currentError);
+                        currentError = (currentError as CustomError<D>).parent;
+                    }
+                    return ancestors;
+                },
             },
         });
         if (sourceError) {

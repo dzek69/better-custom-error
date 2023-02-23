@@ -21,6 +21,7 @@ type Nullable<T> = T | null | undefined;
 interface CustomError<D extends Data> extends Error {
     details?: D;
     parent?: CustomError<Data> | Error;
+    ancestors: (CustomError<Data> | Error)[];
     names: Names;
 }
 
