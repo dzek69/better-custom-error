@@ -1,45 +1,57 @@
-## All errors are the same for TS
+TypeScript support comes with few more caveats than described in {@link Introduction}.
 
-This library is basically all about creating new types on runtime.
-TypeScript is static typechecker, therefore it doesn't play perfect with this, because every error has basically the
-same type, optionally differentiating on `details` object shape.
+# Export types with your error classes
 
-Therefore you can't expect something like that to work:
+In the {@link Introduction} I proposed to create all of your errors in a single file and import them from there. There
+is one little detail that you should be aware of.
+
+If you want to use your errors in callbacks and constraint argument type to be one of your errors, you need to specify
+it like that:
 
 ```typescript
-const MyErr = createError("MyErr");
-const OtherErr = createError("OtherErr");
-
-const handleError = (e: ReturnType<typeof OtherError>) => {}
-
-handleError(new MyErr()); // no TS error here! Both types are the same for TS (until you type them manually)
+const BaseError = createError("BaseError");
+const handleError = (e: ReturnType<typeof BaseError>) => {}
 ```
 
-## However...
+Not very beautiful, but that's a limitation of TypeScript I can't overcome. However, if you export types with the same
+name as your errors, you can use them directly:
 
-You can now specify `details` object shape via:
 ```typescript
-const ToyError = createError<{ toy: ToyItem }>("ToyError");
-const FoodError = createError<{ food: FoodItem }>("FoodError");
+// file: errors.ts
+export const BaseError = createError("BaseError");
+export type BaseError = ReturnType<typeof BaseError>;
 
-const handleError = (e: ReturnType<typeof ToyError>) => {}
+// file: app.ts
+import { BaseError } from "./errors";
 
-const myFoodError = new FoodError();
+const handleError = (e: BaseError) => {}; // works
 
-handleError(myFoodError); // TS error!
+const myError = new FatalError(); // also works
+
+handleError(myError); // and this works too
 ```
 
-While defining `details` shape is useful by itself it also can work as a type guard.
+## Errors with the same shape of details object are considered the same
 
-## Why ReturnType is needed?
+TypeScript uses duck typing, which means that if two objects have the same shape, they are considered the same type.
+Name, due some TypeScript limitations doesn't distinguish between two types for now.
 
-`Error` and `ErrorConstructor` are two different things. TypeScript however has both available as globals and is able to
-determinate which one do you mean basing on usage.
+So if you have created two types with the same (or missing) `details` object shape, TypeScript will consider them the
+same:
+```typescript
+// file: errors.ts
+export const FatalError = createError<{ date: number }>("FatalError");
+export type FatalError = ReturnType<typeof FatalError>;
 
-With custom errors it's not the case.
-In previous Example `FoodError` is an `ErrorConstructor` (`CustomErrorConstructor` to be precise).
-`myFoodError` is `Error` (or `CustomError`).
+export const NonFatalError = createError<{ date: number }>("NonFatalError");
+export type NonFatalError = ReturnType<typeof NonFatalError>;
 
-Constructor returns the instance.
+// file: app.ts
+import { FatalError, NonFatalError } from "./errors";
 
-I will try to improve it with future versions if I will find a way.
+const handleError = (e: FatalError) => {
+    e instanceof FatalError; // could be false!
+};
+
+handleError(new NonFatalError()); // no TS error here!
+```

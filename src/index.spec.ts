@@ -10,6 +10,7 @@ describe("createError", () => {
         const MyCustomError = createError("MyError");
         const err = new MyCustomError();
         err.name.must.equal("MyError");
+        MyCustomError.name.must.equal("MyError");
     });
 
     it("instanceof should detect parent `class`", () => {
@@ -303,15 +304,17 @@ describe("createError", () => {
         differentCharacters.must.be.between(1, 2);
     });
 
-    it("should cut out node-specific stack traces", function() {
+    it("should cut out node-specific stack traces", function(done) {
         const MyDirtyError = createError("MyDirtyError", SyntaxError, { cleanStackTraces: false });
         const MyCleanError = createError("MyCleanError", SyntaxError, { cleanStackTraces: true });
 
-        const dirtyError = new MyDirtyError("abc");
-        const cleanError = new MyCleanError("abc");
-
-        dirtyError.stack.must.include("node:internal");
-        cleanError.stack.must.not.include("node:internal");
+        setImmediate(() => {
+            const cleanError = new MyCleanError("abc");
+            cleanError.stack.must.not.include("node:internal");
+            const dirtyError = new MyDirtyError("abc");
+            dirtyError.stack.must.include("node:internal");
+            done();
+        });
     });
 
     it("normalizes the error", function() {
@@ -328,12 +331,19 @@ describe("createError", () => {
 
         const standard = new Error("Standard error");
         const standardNormalized = MyError.normalize(standard);
-        standardNormalized.must.be.instanceof(MyError);
+        standardNormalized.must.be.instanceof(Error);
         standardNormalized.message.must.equal("Standard error");
 
         const obj = { a: 5 };
         const objNormalized = MyError.normalize(obj);
         objNormalized.must.be.instanceof(MyError);
         objNormalized.message.must.equal("Not an error: [object Object]");
+    });
+
+    it("doesn't allow to pass multiple values of the same type", function() {
+        const MyError = createError("MyError");
+        (() => { new MyError("Something went wrong.", "Really wrong."); }).must.throw(
+            TypeError, "Invalid arguments passed into error",
+        );
     });
 });

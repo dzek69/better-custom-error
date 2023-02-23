@@ -1,8 +1,8 @@
 {
     "pages": [
         {
-            "title": "Examples",
-            "source": "./tutorials/Examples.md"
+            "title": "Introduction",
+            "source": "./tutorials/Introduction.md"
         },
         {
             "title": "Options usage",

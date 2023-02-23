@@ -7,13 +7,14 @@ JavaScript's errors with superpowers! ⚡
 - 🛠 First class TypeScript support - 100% type safe and intellisense friendly
 - 📝 Attach extra data to an error - debug with ease
 - 🪬 Give your errors a meaningful name - improve code readability
-- 🧱 Build your errors one on top of another - access the whole hierarchy
-- 📦 No dependencies - use it anywhere
+- 🧱 Build your errors on top of another - access the whole hierarchy
 - 🌟 Bonus features - clean up your stack traces, normalize invalid values
+- 📦 No dependencies - use it anywhere
+- 🌎 Universal - exposes both ESM modules and CommonJS
 
 ## Usage
 
-> Full documentation available here: [documentation](https://ezez.dev/docs/errors/latest/).
+> Full documentation, including TypeScript usage available here: [documentation](https://ezez.dev/docs/errors/latest/).
 
 `npm i @ezez/errors --save`
 
@@ -27,7 +28,14 @@ const InsertQueryError = createError("InsertQueryError", QueryError, { cleanStac
 
 // then
 
-throw new DatabaseError("Database error", { date: Date.now(), { ... } });
+try {
+    throw new DatabaseError("Connection lost", { date: Date.now(), { ... } });
+}
+catch (e) {
+    if (e instanceof DatabaseError) {
+        console.error(e.details?.date, e.message);
+    }
+}
 ```
 
 ## License

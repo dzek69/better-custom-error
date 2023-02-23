@@ -1,4 +1,4 @@
-import type { Arg, Options, CustomErrorConstructor, CustomError as CustomErrorType, Data } from "./types";
+import type { Options, CustomErrorConstructor, CustomError as CustomErrorType, Data, Nullable } from "./types";
 
 import {
     parseArguments,
@@ -10,7 +10,7 @@ import {
 } from "./utils/index.js";
 
 const defaultOptions: Options = {
-    cleanStackTraces: true,
+    cleanStackTraces: false,
 };
 
 let globalDefaultOptions: Options = {};
@@ -58,7 +58,7 @@ const setDefaultOptions = (options: Options) => {
  * ```
  * @returns {CustomError}
  */
-const createError = <D extends Data>(name: string, ParentError = Error, options?: Options) => { // eslint-disable-line max-lines-per-function, max-len
+const createError = <D extends Data>(name: string, ParentError: ErrorConstructor & { extend?: never } = Error, options?: Options) => { // eslint-disable-line max-lines-per-function, max-len
     const useOptions = Object.assign( // eslint-disable-line prefer-object-spread
         {},
         defaultOptions,
@@ -75,13 +75,14 @@ const createError = <D extends Data>(name: string, ParentError = Error, options?
      * @returns {CustomError}
      * @constructor
      */
-    const CustomError = function CustomError(this: typeof CustomError, arg1: Arg<D>, arg2: Arg<D>, arg3: Arg<D>) { // eslint-disable-line max-lines-per-function, max-len
+    const CustomError = function CustomError(this: typeof CustomError, arg1?: Nullable<string>, arg2?: Nullable<D>, arg3?: Nullable<Error>) { // eslint-disable-line max-lines-per-function, max-len
         if (!(this instanceof CustomError)) {
             // @ts-expect-error needed if creating instances without `class`
             // eslint-disable-next-line @typescript-eslint/no-unsafe-return
             return new CustomError(arg1, arg2, arg3);
         }
 
+        // This is currently not useful without any order arguments, but let's keep it for future overloads
         const { sourceError, message, details } = parseArguments(arg1, arg2, arg3);
 
         const names = enhanceToString([name]);
@@ -128,30 +129,35 @@ const createError = <D extends Data>(name: string, ParentError = Error, options?
                 value: cleanUpStack(new Error().stack!, name, useMessage, useOptions),
                 writable: true,
             },
-            parent: {
+        });
+        if (sourceError) {
+            Object.defineProperty(this, "parent", {
                 configurable: true,
                 enumerable: false,
                 value: sourceError,
                 writable: true,
-            },
-        });
+            });
+        }
     } as CustomErrorConstructor<D>;
     // eslint-disable-next-line @typescript-eslint/no-shadow
     CustomError.extend = <D extends Data>(name: string, options: Options = {}) => createError<D>(
-        name, CustomError, options,
+        name, CustomError as ErrorConstructor, options,
     );
     CustomError.normalize = (maybeError: unknown) => {
-        if (maybeError instanceof CustomError) {
-            return maybeError;
-        }
         if (maybeError instanceof Error) {
-            return new CustomError(maybeError);
+            return maybeError;
         }
         return new CustomError("Not an error: " + String(maybeError));
     };
 
     // @ts-expect-error - it has to be like that
     CustomError.prototype = new ParentError();
+    Object.defineProperty(CustomError, "name", {
+        configurable: true,
+        enumerable: false,
+        value: name,
+        writable: true,
+    });
     return CustomError;
 };
 

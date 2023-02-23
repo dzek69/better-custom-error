@@ -8,6 +8,8 @@ type Names = (string | Names)[];
  */
 type Data = Record<string, unknown>;
 
+type Nullable<T> = T | null | undefined;
+
 /**
  * @typedef {Error} CustomError
  * @property {string} name - error name
@@ -18,19 +20,19 @@ type Data = Record<string, unknown>;
  */
 interface CustomError<D extends Data> extends Error {
     details?: D;
-    parent: CustomError<Data> | Error;
+    parent?: CustomError<Data> | Error;
     names: Names;
 }
 
 type Arg<D extends Data> = Error | CustomError<D> | string | D | undefined | null;
 
 interface CustomErrorConstructor2<D extends Data> {
-    new(arg1?: Arg<D>, arg2?: Arg<D>, arg3?: Arg<D>): CustomError<D>;
-    (arg1?: Arg<D>, arg2?: Arg<D>, arg3?: Arg<D>): CustomError<D>;
+    new(arg1?: Nullable<string>, arg2?: Nullable<D>, arg3?: Nullable<Error>): CustomError<D>;
+    (arg1?: Nullable<string>, arg2?: Nullable<D>, arg3?: Nullable<Error>): CustomError<D>;
     stackTraceLimit: ErrorConstructor["stackTraceLimit"];
     captureStackTrace: ErrorConstructor["captureStackTrace"];
-    extend: (name: string, options?: Options) => CustomErrorConstructor<D>;
-    normalize: (maybeError: unknown) => CustomError<D>;
+    extend: <D2 extends D>(name: string, options?: Options) => CustomErrorConstructor<D2>;
+    normalize: (maybeError: unknown) => CustomError<D> | Error;
     prototype: CustomError<D>;
 }
 
@@ -43,4 +45,4 @@ interface Options {
     cleanStackTraces?: boolean;
 }
 
-export type { Options, Names, Data, Arg, CustomError, CustomErrorConstructor };
+export type { Options, Names, Nullable, Data, Arg, CustomError, CustomErrorConstructor };

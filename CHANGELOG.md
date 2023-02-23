@@ -4,17 +4,23 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [4.1.3+]
-### Dev
-- added unit tests
-- fixed jest warning
-### Fixed
-- all typescript issues requiring typecasting
 ### Added
 - `extend` method, for easier extending
 - `parent` property, for accessing parent error
 - `normalize` method, for easy normalization of invalid values
+### Breaking
+- do not clean stack traces by default
+- removed freedom to instantiate errors with any order of arguments
 ### Changed
 - README cleanup
+- tutorials carefully rewritten
+### Fixed
+- all typescript issues requiring typecasting
+- `name` property on created error classes
+### Dev
+- added unit tests
+- fixed jest warning
+- typesafety for extended classes - subclasses details data must be a subtype of parent type
 
 ## [4.1.3] - 2023-01-07
 ### Dev
