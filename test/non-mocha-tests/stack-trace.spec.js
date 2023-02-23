@@ -121,8 +121,7 @@ try {
     err.stack.split("\n")[2].must.equal("it really is");
     err.stack.split("\n")[3].must.startWith("    at ");
     err.stack.split("\n")[4].must.startWith("    at ");
-    (err.stack.split("\n")[5] === undefined).must.be.true();
-
+    // Ignore rest, it's not important and new Nodes adds a lot of node:internal, but we are not testing cleaner here
     ok(test);
 }
 catch (e) {
@@ -140,7 +139,7 @@ try {
     err.stack.split("\n")[2].must.equal("it really is");
     err.stack.split("\n")[3].must.startWith("    at ");
     err.stack.split("\n")[4].must.startWith("    at ");
-    (err.stack.split("\n")[5] === undefined).must.be.true();
+    // Ignore rest, it's not important and new Nodes adds a lot of node:internal, but we are not testing cleaner here
 
     ok(test);
 }

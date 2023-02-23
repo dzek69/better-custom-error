@@ -342,6 +342,7 @@ describe("createError", () => {
 
     it("doesn't allow to pass multiple values of the same type", function() {
         const MyError = createError("MyError");
+        // eslint-disable-next-line no-new
         (() => { new MyError("Something went wrong.", "Really wrong."); }).must.throw(
             TypeError, "Invalid arguments passed into error",
         );

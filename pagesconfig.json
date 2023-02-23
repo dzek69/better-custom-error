@@ -5,11 +5,11 @@
             "source": "./tutorials/Introduction.md"
         },
         {
-            "title": "Options usage",
-            "source": "./tutorials/Options usage.md"
+            "title": "Options",
+            "source": "./tutorials/Options.md"
         },
         {
-            "title": "TypeScript note",
+            "title": "TypeScript tips",
             "source": "./tutorials/TypeScript.md"
         }
     ],

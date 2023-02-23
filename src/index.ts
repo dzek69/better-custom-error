@@ -82,7 +82,7 @@ const createError = <D extends Data>(name: string, ParentError: ErrorConstructor
      * @returns {CustomError}
      * @constructor
      */
-    const CustomError = function CustomError(this: typeof CustomError, arg1?: Nullable<string>, arg2?: Nullable<D>, arg3?: Nullable<Error>) { // eslint-disable-line max-lines-per-function, max-len
+    const CustomError = function CustomError(this: typeof CustomError, arg1?: Nullable<string>, arg2?: Nullable<D>, arg3?: Nullable<Error>) { // eslint-disable-line max-lines-per-function, max-len, @typescript-eslint/no-shadow
         if (!(this instanceof CustomError)) {
             // @ts-expect-error needed if creating instances without `class`
             // eslint-disable-next-line @typescript-eslint/no-unsafe-return
