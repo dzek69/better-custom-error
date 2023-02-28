@@ -317,27 +317,130 @@ describe("createError", () => {
         });
     });
 
-    it("normalizes the error", function() {
-        const wtf = "something";
+    describe("normalizes the error", function() {
         const MyError = createError("MyError");
-        const error = MyError.normalize(wtf);
 
-        error.must.be.instanceof(MyError);
-        error.message.must.equal("Not an error: something");
+        const notErrorButString = "something";
+        const notErrorButObject = { a: 5 };
 
-        const my = new MyError();
-        const normalized = MyError.normalize(my);
-        my.must.equal(normalized);
+        const notErrorButStrictlyConvincing = {};
+        Object.defineProperties(notErrorButStrictlyConvincing, {
+            name: { value: "LooksLikeError", enumerable: false },
+            message: { value: "I faked myself as error", enumerable: false },
+            stack: { value: "something", enumerable: false },
+        });
 
-        const standard = new Error("Standard error");
-        const standardNormalized = MyError.normalize(standard);
-        standardNormalized.must.be.instanceof(Error);
-        standardNormalized.message.must.equal("Standard error");
+        const notErrorButLooselyConvincing = {};
+        Object.defineProperties(notErrorButLooselyConvincing, {
+            name: { value: 1234, enumerable: true },
+            message: { value: true, enumerable: true },
+            stack: { value: null, enumerable: true },
+        });
 
-        const obj = { a: 5 };
-        const objNormalized = MyError.normalize(obj);
-        objNormalized.must.be.instanceof(MyError);
-        objNormalized.message.must.equal("Not an error: [object Object]");
+        describe("with default strict mode", () => {
+            it("normalizes non-errors", () => {
+                const stringNormalized = MyError.normalize(notErrorButString);
+                stringNormalized.must.be.instanceof(MyError);
+                stringNormalized.message.must.equal("Not an error: something");
+
+                const objNormalized = MyError.normalize(notErrorButObject);
+                objNormalized.must.be.instanceof(MyError);
+                objNormalized.message.must.equal("Not an error: [object Object]");
+            });
+
+            it("keeps errors", async () => {
+                const myError = new MyError();
+                const normalized = MyError.normalize(myError);
+                myError.must.equal(normalized);
+
+                const standardError = new Error("Standard error");
+                const standardNormalized = MyError.normalize(standardError);
+                standardNormalized.must.be.instanceof(Error);
+                standardNormalized.message.must.equal("Standard error");
+            });
+
+            it("keeps error look alikes", async () => {
+                const error = MyError.normalize(notErrorButStrictlyConvincing);
+                error.must.not.be.instanceof(MyError);
+                error.must.equal(notErrorButStrictlyConvincing);
+            });
+
+            it("rejects low quality disguise", async () => {
+                const error = MyError.normalize(notErrorButLooselyConvincing);
+                error.must.be.instanceof(MyError);
+                error.message.must.equal("Not an error: [object Object]");
+            });
+        });
+
+        describe("with instanceof mode", () => {
+            it("normalizes non-errors", () => {
+                const stringNormalized = MyError.normalize(notErrorButString, { mode: "instanceof" });
+                stringNormalized.must.be.instanceof(MyError);
+                stringNormalized.message.must.equal("Not an error: something");
+
+                const objNormalized = MyError.normalize(notErrorButObject, { mode: "instanceof" });
+                objNormalized.must.be.instanceof(MyError);
+                objNormalized.message.must.equal("Not an error: [object Object]");
+            });
+
+            it("keeps errors", async () => {
+                const myError = new MyError();
+                const normalized = MyError.normalize(myError, { mode: "instanceof" });
+                myError.must.equal(normalized);
+
+                const standardError = new Error("Standard error");
+                const standardNormalized = MyError.normalize(standardError, { mode: "instanceof" });
+                standardNormalized.must.be.instanceof(Error);
+                standardNormalized.message.must.equal("Standard error");
+            });
+
+            it("rejects error look alikes", async () => {
+                const error = MyError.normalize(notErrorButStrictlyConvincing, { mode: "instanceof" });
+                error.must.be.instanceof(MyError);
+                error.message.must.equal("Not an error: [object Object]");
+            });
+
+            it("rejects low quality disguise", async () => {
+                const error = MyError.normalize(notErrorButLooselyConvincing, { mode: "instanceof" });
+                error.must.be.instanceof(MyError);
+                error.message.must.equal("Not an error: [object Object]");
+            });
+        });
+
+        describe("with loose mode", () => {
+            it("normalizes non-errors", () => {
+                const stringNormalized = MyError.normalize(notErrorButString, { mode: "loose" });
+                stringNormalized.must.be.instanceof(MyError);
+                stringNormalized.message.must.equal("Not an error: something");
+
+                const objNormalized = MyError.normalize(notErrorButObject, { mode: "loose" });
+                objNormalized.must.be.instanceof(MyError);
+                objNormalized.message.must.equal("Not an error: [object Object]");
+            });
+
+            it("keeps errors", async () => {
+                const myError = new MyError();
+                const normalized = MyError.normalize(myError, { mode: "loose" });
+                myError.must.equal(normalized);
+
+                const standardError = new Error("Standard error");
+                const standardNormalized = MyError.normalize(standardError, { mode: "loose" });
+                standardNormalized.must.be.instanceof(Error);
+                standardNormalized.message.must.equal("Standard error");
+            });
+
+            it("keeps error look alikes", async () => {
+                const error = MyError.normalize(notErrorButStrictlyConvincing, { mode: "loose" });
+                error.must.not.be.instanceof(MyError);
+                error.must.equal(notErrorButStrictlyConvincing);
+            });
+
+            it("keeps low quality disguise", async () => {
+                const error = MyError.normalize(notErrorButLooselyConvincing, { mode: "loose" });
+                error.must.not.be.instanceof(MyError);
+                error.must.equal(notErrorButLooselyConvincing);
+            });
+        });
     });
 
     it("doesn't allow to pass multiple values of the same type", function() {
@@ -357,5 +460,11 @@ describe("createError", () => {
         const queryError = new QueryError("Query failed", null, databaseError);
 
         queryError.ancestors.must.eql([databaseError, tcpError]);
+    });
+
+    it("stringifies well", async () => {
+        const MyError = createError("MyError", SyntaxError);
+        const err = new MyError("abc", { a: 5 }, new TypeError("xxx"));
+        String(err).must.equal("MyError: abc");
     });
 });

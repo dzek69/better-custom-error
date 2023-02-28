@@ -33,7 +33,7 @@ interface CustomErrorConstructor2<D extends Data> {
     stackTraceLimit: ErrorConstructor["stackTraceLimit"];
     captureStackTrace: ErrorConstructor["captureStackTrace"];
     extend: <D2 extends D>(name: string, options?: Options) => CustomErrorConstructor<D2>;
-    normalize: (maybeError: unknown) => CustomError<D> | Error;
+    normalize: (maybeError: unknown, options?: NormalizeOptions) => CustomError<D> | Error;
     prototype: CustomError<D>;
 }
 
@@ -46,4 +46,14 @@ interface Options {
     cleanStackTraces?: boolean;
 }
 
-export type { Options, Names, Nullable, Data, Arg, CustomError, CustomErrorConstructor };
+interface NormalizeOptions {
+    /**
+     * Defines how to check if something is an error
+     * instanceof - user instanceof operator against Error
+     * strict - check if error has non-enum string name, message & stack properties, & name ends with "Error"
+     * loose - check if error has name, message and stack properties
+     */
+    mode: "instanceof" | "strict" | "loose";
+}
+
+export type { Options, Names, Nullable, Data, Arg, CustomError, CustomErrorConstructor, NormalizeOptions };

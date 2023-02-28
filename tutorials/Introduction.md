@@ -158,6 +158,15 @@ catch (e) {
 }
 ```
 
+Normalizing can be done with three modes:
+- `instanceof` - it will NOT normalize if given value is instance of `Error`
+- `strict` - it will NOT normalize if given value looks very close to an `Error` instance, but it doesn't do
+`instanceof` check - instead it checks if given value has `name`, `message`, `stack` properties, that are
+non-enumerable strings, and `name` is ending with `Error`. This is the default mode. It should support most node errors
+that doesn't follow the "thrown values have to be `instanceof` Error" practice.
+- `loose` - it will NOT normalize anything that has `name`, `message` and `stack` properties. Use it if you work with a
+lot of bad error lookalikes, but for some reason you want to keep them.
+
 ## Building an error from another error
 
 Sometimes you want to throw an error that is based on another error. For example, you want to throw a `RenderError`

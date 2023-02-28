@@ -4,7 +4,7 @@ import type {
     CustomError as CustomErrorType,
     Data,
     Nullable,
-    CustomError,
+    CustomError, NormalizeOptions,
 } from "./types";
 
 import {
@@ -164,11 +164,37 @@ const createError = <D extends Data>(name: string, ParentError: ErrorConstructor
     CustomError.extend = <D extends Data>(name: string, options: Options = {}) => createError<D>(
         name, CustomError as ErrorConstructor, options,
     );
-    CustomError.normalize = (maybeError: unknown) => {
-        if (maybeError instanceof Error) {
-            return maybeError;
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    CustomError.normalize = (maybeError: unknown, options: NormalizeOptions = { mode: "strict" }) => {
+        const normalized = new CustomError("Not an error: " + String(maybeError));
+        if (!maybeError || typeof maybeError !== "object") {
+            return normalized;
         }
-        return new CustomError("Not an error: " + String(maybeError));
+        if (options.mode === "instanceof") {
+            if (maybeError instanceof Error) {
+                return maybeError;
+            }
+            return normalized;
+        }
+
+        const hasProperties = "name" in maybeError && "stack" in maybeError && "message" in maybeError;
+
+        if (options.mode === "strict") {
+            if (
+                hasProperties
+                && typeof maybeError.name === "string" && typeof maybeError.stack === "string"
+                && typeof maybeError.message === "string" && maybeError.name.endsWith("Error")
+            ) {
+                return maybeError as Error;
+            }
+            return normalized;
+        }
+
+        if (hasProperties) {
+            return maybeError as Error;
+        }
+
+        return normalized;
     };
 
     // @ts-expect-error - it has to be like that
