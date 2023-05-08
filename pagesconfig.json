@@ -11,6 +11,10 @@
         {
             "title": "TypeScript tips",
             "source": "./tutorials/TypeScript.md"
+        },
+        {
+            "title": "Changelog",
+            "source": "./CHANGELOG.md"
         }
     ],
     "source": "tutorials"
