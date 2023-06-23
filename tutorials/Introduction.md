@@ -33,7 +33,7 @@ import { createError } from "@ezez/errors";
 export const DatabaseError = createError("DatabaseError");
 
 export const QueryError = DatabaseError.extend("QueryError"); // extend custom error
-export const ApiParametersError = createError("DatabaseError", TypeError); // extend built-in error
+export const ApiParametersError = createError("ApiParametersError", TypeError); // extend built-in error
 ```
 
 We just created:

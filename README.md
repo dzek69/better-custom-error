@@ -8,7 +8,7 @@ JavaScript's errors with superpowers! ⚡
 - 📝 Attach extra data to an error - debug with ease
 - 🪬 Give your errors a meaningful name - improve code readability
 - 🧱 Build your errors on top of another - access the whole hierarchy
-- 🌟 Bonus features - clean up your stack traces, normalize invalid values
+- 🌟 Bonus features - clean up your stack traces, normalize non-errors
 - 📦 No dependencies - use it anywhere
 - 🌎 Universal - exposes both ESM modules and CommonJS
 

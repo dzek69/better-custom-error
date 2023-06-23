@@ -26,7 +26,7 @@ import { BaseError } from "./errors";
 
 const handleError = (e: BaseError) => {}; // works
 
-const myError = new FatalError(); // also works
+const myError = new BaseError(); // also works
 
 handleError(myError); // and this works too
 ```
@@ -34,7 +34,7 @@ handleError(myError); // and this works too
 ## Errors with the same shape of details object are considered the same
 
 TypeScript uses duck typing, which means that if two objects have the same shape, they are considered the same type.
-Name, due some TypeScript limitations doesn't distinguish between two types for now.
+Name of the error due some TypeScript limitations doesn't distinguish between two types for now.
 
 So if you have created two types with the same (or missing) `details` object shape, TypeScript will consider them the
 same:

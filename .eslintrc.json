@@ -36,7 +36,8 @@
                 "@typescript-eslint/no-magic-numbers": "off",
                 "@typescript-eslint/no-unsafe-call": "off",
                 "@typescript-eslint/no-unsafe-member-access": "off",
-                "no-unused-labels": "off"
+                "no-unused-labels": "off",
+                "@typescript-eslint/require-await": "off"
             }
         }
     ]
