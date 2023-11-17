@@ -468,3 +468,40 @@ describe("createError", () => {
         String(err).must.equal("MyError: abc");
     });
 });
+
+describe.skip("(TypeScript tests)", () => {
+    it("works with interfaces without index", async () => {
+        interface SwitchesSchema {
+            name: string;
+        }
+
+        const config: SwitchesSchema = {
+            name: "xd",
+        };
+
+        const SwitchError = createError("SwitchError");
+        Math.random() === -1 && new SwitchError("Unknown switch type", config);
+    });
+
+    it("disallows unexpected data when defined as interface", async () => {
+        interface SwitchesSchema {
+            name: string;
+        }
+
+        const SwitchError = createError<SwitchesSchema>("SwitchError");
+        Math.random() === -1 && new SwitchError("Unknown switch type", { a: "b" });
+        Math.random() === -1 && new SwitchError("Unknown switch type", { name: "b" });
+        Math.random() === -1 && new SwitchError("Unknown switch type", { name: "b", c: "d" });
+    });
+
+    it("disallows unexpected data when defined as type", async () => {
+        type SwitchesSchema = {
+            name: string;
+        };
+
+        const SwitchError = createError<SwitchesSchema>("SwitchError");
+        Math.random() === -1 && new SwitchError("Unknown switch type", { a: "b" });
+        Math.random() === -1 && new SwitchError("Unknown switch type", { name: "b" });
+        Math.random() === -1 && new SwitchError("Unknown switch type", { name: "b", c: "d" });
+    });
+});

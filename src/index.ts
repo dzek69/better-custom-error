@@ -1,3 +1,4 @@
+import type { OmitIndexSignature } from "type-fest";
 import type {
     Options,
     CustomErrorConstructor,
@@ -65,7 +66,7 @@ const setDefaultOptions = (options: Options) => {
  * ```
  * @returns {CustomError}
  */
-const createError = <D extends Data>(name: string, ParentError: ErrorConstructor & { extend?: never } = Error, options?: Options) => { // eslint-disable-line max-lines-per-function, max-len
+const createError = <D extends OmitIndexSignature<Data>>(name: string, ParentError: ErrorConstructor & { extend?: never } = Error, options?: Options) => { // eslint-disable-line max-lines-per-function, max-len
     const useOptions = Object.assign( // eslint-disable-line prefer-object-spread
         {},
         defaultOptions,

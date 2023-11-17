@@ -20,7 +20,7 @@
         "inlineSourceMap": null,
         "inlineSources": null,
         "isolatedModules": true,
-        "jsx": "react",
+        "jsx": "react-jsx",
         "lib": [
             "es2019",
             "dom"
@@ -43,7 +43,7 @@
         "noUnusedParameters": false,
         "outDir": "./esm",
         "outFile": null,
-        "paths": null,
+        "paths": {},
         "preserveSymlinks": false,
         "preserveValueImports": false,
         "removeComments": true,
